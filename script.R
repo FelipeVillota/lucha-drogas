@@ -541,14 +541,25 @@ working_data[["INCAUTACIÓN DE COCAINA"]] <- working_data[["INCAUTACIÓN DE COCA
   filter(municipio != "SIN ESTABLECER")
 
 
+#------------ Dropping unnecessary columns ----------
 
+# Actualización de NAs
+na_rows_list <- lapply(working_data, find_na_rows)
 
-# Drop
 
 # "cod_depto", "cod_muni", Geo.Municipio
 
+cols_to_drop <- c("cod_depto", "cod_muni", "Geo.Municipio")
 
-# coords del resto y codmuni y coddepto
+working_data <- lapply(working_data, function(df) {
+  df %>% select(-any_of(cols_to_drop))
+})
+
+# Actualización de NAs
+na_rows_list <- lapply(working_data, find_na_rows)
+
+
+# Coordenadas del del resto, junto con cod_muni y cod_depto
 
 
 working_data[["INCAUTACIÓN DE COCAINA"]] <- 
@@ -674,7 +685,6 @@ working_data[["INCAUTACIÓN DE COCAINA"]] <-
     ),
     cod_muni = case_when(
       # ISO 3166-1 Country Codes (Numeric)
-      municipio == "COLOMBIA" ~ "170",         # Colombia
       municipio == "ECUADOR" ~ "218",          # Ecuador
       municipio == "PERU" ~ "604",             # Peru
       municipio == "BRASIL" ~ "076",           # Brazil
