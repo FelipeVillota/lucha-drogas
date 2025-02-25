@@ -1,0 +1,36 @@
+# A tibble: 33 × 2
+   NOM_DPTO                                                 unique_COD_MPIO
+   <chr>                                                              <int>
+ 1 ANTIOQUIA                                                            125
+ 2 BOYACÁ                                                               123
+ 3 CUNDINAMARCA                                                         116
+ 4 SANTANDER                                                             87
+ 5 NARIÑO                                                                64
+ 6 TOLIMA                                                                47
+ 7 BOLÍVAR                                                               46
+ 8 CAUCA                                                                 42
+ 9 VALLE DEL CAUCA                                                       42
+10 NORTE DE SANTANDER                                                    40
+11 HUILA                                                                 37
+12 CHOCÓ                                                                 30
+13 CÓRDOBA                                                               30
+14 MAGDALENA                                                             30
+15 META                                                                  29
+16 CALDAS                                                                27
+17 SUCRE                                                                 26
+18 CESAR                                                                 25
+19 ATLÁNTICO                                                             23
+20 CASANARE                                                              19
+21 CAQUETÁ                                                               16
+22 LA GUAJIRA                                                            15
+23 RISARALDA                                                             14
+24 PUTUMAYO                                                              13
+25 QUINDÍO                                                               12
+26 AMAZONAS                                                              11
+27 GUAINÍA                                                                8
+28 ARAUCA                                                                 7
+29 VAUPÉS                                                                 6
+30 GUAVIARE                                                               4
+31 VICHADA                                                                4
+32 ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA               2
+33 BOGOTÁ, D.C.                                                           1
