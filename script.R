@@ -301,9 +301,9 @@ sink("skim_geo.txt")
 lapply(working_data, skim)
 sink()
 
-### NAs
+### NAs 
 
-library(naniar)
+library(naniar) #
 lapply(working_data, gg_miss_var)
 
 # Define a function to find rows with NAs in a data frame
