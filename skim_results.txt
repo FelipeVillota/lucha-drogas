@@ -12,7 +12,7 @@ Column type frequency:
 ________________________         
 Group variables            None  
 
-── Variable type: character ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: character ────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable      n_missing complete_rate min max empty n_unique whitespace
 1 COD_DEPTO                  0             1   2   2     0       24          0
 2 DEPARTAMENTO               0             1   4  18     0       24          0
@@ -20,11 +20,11 @@ Group variables            None
 4 MUNICIPIO                  0             1   4  23     0      269          0
 5 UNIDADES DE MEDIDA         0             1   8   8     0        1          0
 
-── Variable type: numeric ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: numeric ──────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable n_missing complete_rate mean   sd   p0  p25  p50  p75  p100 hist 
 1 CANTIDAD              0             1 144. 160. 0.03 43.2 95.9 184. 2541. ▇▁▁▁▁
 
-── Variable type: POSIXct ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: POSIXct ──────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable n_missing complete_rate min                 max                 median              n_unique
 1 FECHA HECHO           0             1 2003-01-01 00:00:00 2015-09-30 00:00:00 2008-07-01 00:00:00     3678
 
@@ -42,7 +42,7 @@ Column type frequency:
 ________________________         
 Group variables            None  
 
-── Variable type: character ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: character ────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable    n_missing complete_rate min max empty n_unique whitespace
 1 COD_DEPTO                0             1   2   5     0       35          0
 2 DEPARTAMENTO             0             1   4  18     0       41          0
@@ -50,11 +50,11 @@ Group variables            None
 4 MUNICIPIO                0             1   4  25     0      486          0
 5 UNIDAD DE MEDIDA         0             1   6   6     0        1          0
 
-── Variable type: numeric ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: numeric ──────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable n_missing complete_rate mean   sd p0 p25 p50 p75 p100 hist 
 1 CANTIDAD              0             1 1.81 2.93  1   1   1   2  227 ▇▁▁▁▁
 
-── Variable type: POSIXct ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: POSIXct ──────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable n_missing complete_rate min                 max                 median              n_unique
 1 FECHA HECHO           0             1 2010-01-02 00:00:00 2024-12-30 00:00:00 2018-10-25 00:00:00     5394
 
@@ -72,7 +72,7 @@ Column type frequency:
 ________________________         
 Group variables            None  
 
-── Variable type: character ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: character ────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable    n_missing complete_rate min max empty n_unique whitespace
 1 COD_DEPTO                0             1   2   2     0       28          0
 2 DEPARTAMENTO             0             1   4  18     0       34          0
@@ -81,11 +81,11 @@ Group variables            None
 5 TIPO CULTIVO             0             1   4   9     0        4          0
 6 UNIDAD DE MEDIDA         0             1   8   8     0        1          0
 
-── Variable type: numeric ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: numeric ──────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable n_missing complete_rate mean   sd p0  p25  p50  p75 p100 hist 
 1 CANTIDAD              8          1.00 6.55 13.0  0 1.14 2.45 5.99  780 ▇▁▁▁▁
 
-── Variable type: POSIXct ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: POSIXct ──────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable n_missing complete_rate min                 max                 median              n_unique
 1 FECHA HECHO           0             1 2007-01-01 00:00:00 2024-12-18 00:00:00 2017-06-14 00:00:00     6386
 
@@ -103,7 +103,7 @@ Column type frequency:
 ________________________         
 Group variables            None  
 
-── Variable type: character ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: character ────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable      n_missing complete_rate min max empty n_unique whitespace
 1 COD_DEPTO                  1          1.00   2   5     0       41          0
 2 DEPARTAMENTO               0          1      4  21     0       39          0
@@ -111,11 +111,11 @@ Group variables            None
 4 MUNICIPIO                  0          1      3  27     0      932          0
 5 UNIDADES DE MEDIDA         0          1      9   9     0        1          0
 
-── Variable type: numeric ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: numeric ──────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable n_missing complete_rate mean   sd p0   p25   p50  p75 p100 hist 
 1 CANTIDAD              0             1 3.01 39.3  0 0.004 0.011 0.04 9583 ▇▁▁▁▁
 
-── Variable type: POSIXct ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: POSIXct ──────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable n_missing complete_rate min                 max                 median              n_unique
 1 FECHA HECHO           0             1 2010-01-01 00:00:00 2024-12-31 00:00:00 2016-02-17 00:00:00     5479
 
@@ -133,7 +133,7 @@ Column type frequency:
 ________________________         
 Group variables            None  
 
-── Variable type: character ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: character ────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable      n_missing complete_rate min max empty n_unique whitespace
 1 COD_DEPTO                  0             1   2   2     0       33          0
 2 DEPARTAMENTO               0             1   4  18     0       33          0
@@ -141,11 +141,11 @@ Group variables            None
 4 MUNICIPIO                  0             1   3  27     0      916          0
 5 UNIDADES DE MEDIDA         0             1   9   9     0        1          0
 
-── Variable type: numeric ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: numeric ──────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable n_missing complete_rate   mean   sd p0   p25     p50   p75 p100 hist 
 1 CANTIDAD              0             1 0.0720 2.67  0 0.003 0.00991 0.028 1180 ▇▁▁▁▁
 
-── Variable type: POSIXct ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: POSIXct ──────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable n_missing complete_rate min                 max                 median              n_unique
 1 FECHA HECHO           0             1 2010-01-01 00:00:00 2024-12-31 00:00:00 2015-01-26 00:00:00     5479
 
@@ -163,7 +163,7 @@ Column type frequency:
 ________________________         
 Group variables            None  
 
-── Variable type: character ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: character ────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable    n_missing complete_rate min max empty n_unique whitespace
 1 COD_DEPTO                0             1   2   5     0       90          0
 2 DEPARTAMENTO             0             1   4  25     0       92          0
@@ -171,11 +171,11 @@ Group variables            None
 4 MUNICIPIO                0             1   3  27     0      995          0
 5 UNIDAD DE MEDIDA         0             1   9   9     0        1          0
 
-── Variable type: numeric ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: numeric ──────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable n_missing complete_rate mean   sd p0   p25  p50   p75  p100 hist 
 1 CANTIDAD              0             1 30.6 242.  0 0.003 0.01 0.044 25000 ▇▁▁▁▁
 
-── Variable type: POSIXct ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: POSIXct ──────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable n_missing complete_rate min                 max                 median              n_unique
 1 FECHA HECHO           0             1 2010-01-01 00:00:00 2024-12-31 00:00:00 2016-07-18 00:00:00     5479
 
@@ -193,7 +193,7 @@ Column type frequency:
 ________________________         
 Group variables            None  
 
-── Variable type: character ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: character ────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable      n_missing complete_rate min max empty n_unique whitespace
 1 COD_DEPTO                  0             1   2   5     0       36          0
 2 DEPARTAMENTO               0             1   4  25     0       36          0
@@ -201,11 +201,11 @@ Group variables            None
 4 MUNICIPIO                  0             1   4  27     0      389          0
 5 UNIDADES DE MEDIDA         0             1   9   9     0        1          0
 
-── Variable type: numeric ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: numeric ──────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable n_missing complete_rate  mean   sd        p0   p25   p50  p75 p100 hist 
 1 CANTIDAD              0             1 0.420 4.27 0.0000002 0.001 0.003 0.01  306 ▇▁▁▁▁
 
-── Variable type: POSIXct ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: POSIXct ──────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable n_missing complete_rate min                 max                 median              n_unique
 1 FECHA HECHO           0             1 2010-01-01 00:00:00 2024-12-26 00:00:00 2014-06-12 00:00:00     4310
 
@@ -223,7 +223,7 @@ Column type frequency:
 ________________________         
 Group variables            None  
 
-── Variable type: character ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: character ────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable    n_missing complete_rate min max empty n_unique whitespace
 1 COD_DEPTO                0             1   2   5     0       53          0
 2 DEPARTAMENTO             0             1   4  25     0       52          0
@@ -231,11 +231,11 @@ Group variables            None
 4 MUNICIPIO                0             1   3  27     0     1045          0
 5 UNIDAD DE MEDIDA         0             1   9   9     0        1          0
 
-── Variable type: numeric ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: numeric ──────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable n_missing complete_rate mean   sd p0   p25    p50 p75  p100 hist 
 1 CANTIDAD              0             1 5.83 97.5  0 0.012 0.0309 0.1 14900 ▇▁▁▁▁
 
-── Variable type: POSIXct ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: POSIXct ──────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable n_missing complete_rate min                 max                 median              n_unique
 1 FECHA HECHO           0             1 2010-01-01 00:00:00 2024-12-31 00:00:00 2015-01-21 00:00:00     5479
 

@@ -1,42 +1,53 @@
 library(shiny)
+library(leaflet)
+library(DT)
 
-# Define UI for application that draws a histogram
 ui <- fluidPage(
-
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
-        )
+  titlePanel("Geographic Data Viewer"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("dataset", 
+                  "Choose dataset:", 
+                  choices = names(working_data))
+    ),
+    mainPanel(
+      leafletOutput("map"),
+      h4("Data Summary"),
+      DTOutput("table")
     )
+  )
 )
 
-# Define server logic required to draw a histogram
 server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
-    })
+  selected_data <- reactive({
+    req(input$dataset)
+    working_data[[input$dataset]]
+  })
+  
+  output$map <- renderLeaflet({
+    df <- selected_data()
+    
+    validate(
+      need(all(c("LATITUD", "LONGITUD") %in% colnames(df)),
+           "Selected dataset does not contain required LATITUDE and LONGITUDE columns")
+    )
+    
+    leaflet(df) %>%
+      addTiles() %>%
+      addCircleMarkers(
+        lng = ~LONGITUD,
+        lat = ~LATITUD,
+        radius = 5,
+        color = "blue",
+        fillOpacity = 0.8
+      )
+  })
+  
+  output$table <- renderDT({
+    df <- selected_data()
+    datatable(head(df),
+              options = list(scrollX = TRUE, pageLength = 5))
+  })
 }
 
-# Run the application 
-shinyApp(ui = ui, server = server)
+shinyApp(ui, server)
