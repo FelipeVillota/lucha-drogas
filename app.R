@@ -1,6 +1,7 @@
 library(shiny)
 library(leaflet)
 library(DT)
+library(tidyverse)
 
 ui <- fluidPage(
   titlePanel("Geographic Data Viewer"),
