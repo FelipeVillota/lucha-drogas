@@ -1,0 +1,16 @@
+Version: 1.0
+ProjectId: 0f3ad476-8942-4f51-b9c7-022030ff81ef
+
+RestoreWorkspace: Default
+SaveWorkspace: Default
+AlwaysSaveHistory: Default
+
+EnableCodeIndexing: Yes
+UseSpacesForTab: Yes
+NumSpacesForTab: 2
+Encoding: UTF-8
+
+RnwWeave: Sweave
+LaTeX: pdfLaTeX
+
+ZoteroLibraries: "My Library"
