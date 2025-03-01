@@ -1,1 +1,516 @@
 AARHUS ?
+
+
+# library(shiny)
+# library(leaflet)
+# library(ggplot2)
+# library(plotly)
+# library(DT)
+# library(tidyverse)
+# library(lubridate)
+# 
+# source("descripciones-datasets-app.R")
+# 
+# 
+# ui <- fluidPage(
+#   tags$head(
+#     tags$style(HTML("body { background-color: #121212; color: #ffffff; }
+#                       .title-container { text-align: center; padding: 20px; }
+#                       h2 { font-size: 28px; font-weight: bold; }
+#                       p { font-size: 16px; max-width: 800px; margin: 0 auto; }
+#                       .sidebar-panel { background-color: #1e1e1e; padding: 15px; border-radius: 8px; }
+#                       .main-panel { background-color: #1e1e1e; padding: 15px; border-radius: 8px; }
+#                    "))
+#   ),
+#   fluidRow(
+#     div(class = "title-container",
+#         h2("Colombia vs Drogas"),
+#         p(HTML("Integración y exploración espacio-temporal de todos los datos disponibles relativos a los avances en la lucha contra el problema mundial de las drogas del
+#                 <a href='https://www.mindefensa.gov.co/defensa-y-seguridad/datos-y-cifras/informacion-estadistica'
+#                 target='_blank' style='color: #007bff; text-decoration: none; font-weight: bold;'>Ministerio de Defensa</a>
+#                 (versión publicada 16 de enero de 2025)"))
+#     )
+#   ),
+#   sidebarLayout(
+#     sidebarPanel(class = "sidebar-panel",
+#                  selectInput("dataset", "Campos de acción:", choices = names(working_data)),
+#                  div(style = "margin-top: 20px; font-style: italic; color: #bbbbbb;",
+#                      htmlOutput("dataset_description")
+#                  )
+#     ),
+#     mainPanel(class = "main-panel",
+#               leafletOutput("map", height = "60vh"),
+#               plotlyOutput("timeline", height = "30vh")
+#     )
+#   )
+# )
+# 
+# server <- function(input, output) {
+#   selected_data <- reactive({
+#     req(input$dataset)
+#     working_data[[input$dataset]]
+#   })
+# 
+#   output$dataset_description <- renderUI({
+#     desc <- dataset_descriptions[[input$dataset]]
+#     HTML(paste0("<strong>Descripción:</strong> ", desc))
+#   })
+# 
+#   output$map <- renderLeaflet({
+#     df <- selected_data()
+# 
+#     validate(
+#       need(all(c("LATITUD", "LONGITUD") %in% colnames(df)),
+#            "El conjunto seleccionado no contiene coordenadas válidas (LATITUD/LONGITUD)")
+#     )
+# 
+#     leaflet(df, options = leafletOptions(preferCanvas = TRUE)) %>%
+#       addProviderTiles(providers$Stadia.StamenToner) %>%
+#       addMarkers(
+#         lng = ~LONGITUD,
+#         lat = ~LATITUD,
+#         clusterOptions = markerClusterOptions(),
+#         icon = makeIcon(iconWidth = 8, iconHeight = 8)
+#       ) %>%
+#       setView(lng = median(df$LONGITUD, na.rm = TRUE),
+#               lat = median(df$LATITUD, na.rm = TRUE),
+#               zoom = ifelse(nrow(df) > 1000, 5, 7))
+#   })
+# 
+#   output$timeline <- renderPlotly({
+#     df <- selected_data()
+#     
+#     validate(
+#       need("fecha_hecho" %in% colnames(df) & "cantidad" %in% colnames(df) & "municipio" %in% colnames(df),
+#            "El conjunto seleccionado no contiene datos válidos para la línea de tiempo")
+#     )
+#     
+#     df <- df %>% mutate(fecha_hecho = as.Date(fecha_hecho))
+#     
+#     p <- ggplot(df, aes(x = fecha_hecho, y = cantidad, text = paste("Fecha:", fecha_hecho, "<br>Municipio:", municipio, "<br>Cantidad:", cantidad))) +
+#       geom_point(size = 1, color = "#00BFC4", alpha = 0.5) +
+#       labs(x = "Fecha", y = "Cantidad", title = "Cantidad reportada a lo largo del tiempo") +
+#       theme_minimal() +
+#       theme(plot.background = element_rect(fill = "#1e1e1e"),
+#             panel.background = element_rect(fill = "#1e1e1e"),
+#             text = element_text(color = "#ffffff"),
+#             axis.text = element_text(color = "#ffffff"),
+#             axis.title = element_text(color = "#ffffff"))
+#     
+#     ggplotly(p, tooltip = "text")
+# 
+# 
+# 
+#   })
+# }
+# 
+# shinyApp(ui, server) ## la buena versión
+# 
+
+
+
+
+# library(shiny)
+# library(leaflet)
+# library(leaflet.extras)
+# library(ggplot2)
+# library(plotly)
+# library(DT)
+# library(tidyverse)
+# library(lubridate)
+# 
+# 
+# # UI -------
+# ui <- fluidPage(
+#   tags$head(
+#     tags$style(
+#       HTML(
+#         "body { background-color: #121212; color: #ffffff; }
+#                         .title-container { text-align: center; padding: 20px; }
+#                         h2 { font-size: 28px; font-weight: bold; }
+#                         p { font-size: 16px; max-width: 800px; margin: 0 auto; }
+#                         .sidebar-panel { background-color: #1e1e1e; padding: 15px; border-radius: 8px; }
+#                         .main-panel { background-color: #1e1e1e; padding: 15px; border-radius: 8px; }
+#                         .time-control { background-color: #2a2a2a; padding: 10px; border-radius: 5px; margin-top: 10px; }
+#                      "
+#       )
+#     )
+#   ),
+#   fluidRow(
+#     div(
+#       class = "title-container",
+#       h2("Colombia vs Drogas"),
+#       p(
+#         HTML(
+#           "Integración y exploración espacio-temporal de todos los datos disponibles relativos a los avances en la lucha contra el problema mundial de las drogas del
+#                   <a href='https://www.mindefensa.gov.co/defensa-y-seguridad/datos-y-cifras/informacion-estadistica'
+#                   target='_blank' style='color: #007bff; text-decoration: none; font-weight: bold;'>Ministerio de Defensa</a>
+#                   (versión publicada 16 de enero de 2025)"
+#         )
+#       )
+#     )
+#   ),
+# 
+#   # sidebarLayout ----
+#   sidebarLayout(
+#     sidebarPanel(
+#       class = "sidebar-panel",
+#       selectInput("dataset", "Campos de acción:", choices = names(working_data)),
+# 
+#       ## Descripción del dataset ----
+#       div(
+#         style = "margin-top: 20px; font-style: italic; color: #bbbbbb;",
+#         htmlOutput("dataset_description")
+#       ),
+# 
+#       ## Time period selection----
+#       # div(
+#       #   class = "time-control",
+#       #   h4("Filtro de tiempo"),
+#       #   dateRangeInput(
+#       #     "dateRange",
+#       #     "Período:",
+#       #     start = "2020-01-01",
+#       #     end = Sys.Date(),
+#       #     format = "yyyy-mm-dd",
+#       #     separator = " a "
+#       #   ),
+#       #   checkboxInput("animateMap", "Mostrar animación temporal", value = FALSE)
+#       # ),
+# 
+#       ## Map controls----
+#       div(
+#         class = "time-control",
+#         h4("Configuración del mapa"),
+#         sliderInput(
+#           "heatIntensity",
+#           "Intensidad:",
+#           min = 0.1,
+#           max = 1.0,
+#           value = 0.6,
+#           step = 0.1
+#         ),
+#         sliderInput(
+#           "heatRadius",
+#           "Radio:",
+#           min = 5,
+#           max = 30,
+#           value = 15,
+#           step = 5
+#         )
+#       ),
+#     ),
+#     # mainPanel ----
+#     mainPanel(
+#       class = "main-panel",
+#       tabsetPanel(
+#         tabPanel(
+#           "Mapa",
+# 
+#           # Cluster checkbox placed as legend control
+#           div(
+#             style = "position:relative;", # Ensure the leaflet map is the positioning context
+#             leafletOutput("map", height = "60vh"),
+#             absolutePanel(
+#               bottom = 10,  # Position at the bottom
+#               left = 10,    # Position at the left
+#               style = paste0(
+#                 "z-index:500; background-color: rgba(240,240,240,0.8); padding: 8px; border-radius: 5px;",
+#                 "box-shadow: 0 0 15px rgba(0,0,0,0.2); color: black;" # Light background, subtle shadow, black text
+#               ),
+#               checkboxInput("showClusters", tags$span("Mostrar Clusters", style = "color: black;"), value = FALSE, width = "100%")  # black label
+#             )
+#           ),
+# 
+#           plotlyOutput("timeline", height = "30vh")
+#         ),
+#         tabPanel(
+#           "Distribución Temporal",
+#           plotlyOutput("heatmapTime", height = "60vh"),
+#           p(
+#             "El mapa de calor muestra la concentración de intervenciones a lo largo del tiempo y por municipio."
+#           )
+#         )
+#       )
+#     )
+#   )
+# )
+# 
+# # Server----
+# server <- function(input, output, session) {
+#   selected_data <- reactive({
+#     req(input$dataset)
+#     df <- working_data[[input$dataset]]
+# 
+#     validate(
+#       need(
+#         all(c("LATITUD", "LONGITUD") %in% colnames(df)),
+#         "El conjunto seleccionado no contiene coordenadas válidas"
+#       )
+#     )
+# 
+#     # Ensure date column is properly formatted
+#     if ("fecha_hecho" %in% colnames(df)) {
+#       df <- df %>% mutate(fecha_hecho = as.Date(fecha_hecho))
+# 
+#       # Filter by date range
+#       if (!is.null(input$dateRange)) {
+#         df <- df %>%
+#           filter(
+#             fecha_hecho >= input$dateRange[1] &
+#               fecha_hecho <= input$dateRange[2]
+#           )
+#       }
+#     }
+# 
+#     return(df) # Explicitly return the data frame
+#   })
+# 
+#   # Update date range based on selected dataset
+#   observe({
+#     req(input$dataset)
+#     df <- working_data[[input$dataset]]
+# 
+#     if ("fecha_hecho" %in% colnames(df)) {
+#       df <- df %>% mutate(fecha_hecho = as.Date(fecha_hecho))
+#       min_date <- min(df$fecha_hecho, na.rm = TRUE)
+#       max_date <- max(df$fecha_hecho, na.rm = TRUE)
+# 
+#       updateDateRangeInput(
+#         session,
+#         "dateRange",
+#         start = min_date,
+#         end = max_date
+#       )
+#     }
+#   })
+# 
+#   # output$dataset_description ----
+#   output$dataset_description <- renderUI({
+#     req(input$dataset)
+#     desc <- dataset_descriptions[[input$dataset]]
+#     HTML(paste0("<strong>Descripción:</strong> ", desc))
+#   })
+# 
+#   # output$map ----
+#   output$map <- renderLeaflet({
+#     df <- selected_data()
+# 
+#     validate(
+#       need(
+#         all(c("LATITUD", "LONGITUD") %in% colnames(df)) &&
+#           is.numeric(df$LATITUD) && is.numeric(df$LONGITUD),
+#         "El conjunto seleccionado no contiene coordenadas válidas"
+#       )
+#     )
+# 
+#     # Create base map
+#     base_map <- leaflet(options = leafletOptions(preferCanvas = TRUE)) %>%
+#       addProviderTiles(providers$CartoDB.DarkMatter) %>%
+#       setView(lng = -74.297333, lat = 4.570868, zoom = 6) # Colombia's default center
+# 
+#     # Make sure we have data to display
+#     if (nrow(df) > 0) {
+#       # Use actual data center if available
+#       if (all(!is.na(c(df$LATITUD, df$LONGITUD)))) {
+#         base_map <- base_map %>%
+#           setView(
+#             lng = median(df$LONGITUD, na.rm = TRUE),
+#             lat = median(df$LATITUD, na.rm = TRUE),
+#             zoom = ifelse(nrow(df) > 100, 5, 7)
+#           )
+#       }
+# 
+#       # Add heatmap layer - with fallback to regular heatmap if leaflet.extras fails
+#       tryCatch({
+#         base_map <- base_map %>%
+#           addHeatmap(
+#             data = df,
+#             lng = ~ LONGITUD,
+#             lat = ~ LATITUD,
+#             intensity = if ("cantidad" %in% colnames(df))
+#               ~ cantidad
+#             else
+#               1,
+#             radius = input$heatRadius,
+#             blur = input$heatRadius * 1.5,
+#             max = input$heatIntensity,
+#             gradient = c("#0000FF", "#00FFFF", "#00FF00", "#FFFF00", "#FF0000")
+#           )
+#       }, error = function(e) {
+#         # Fallback method using density calculation
+#         base_map <<- base_map %>%
+#           addTiles() %>%
+#           addCircles(
+#             data = df,
+#             lng = ~ LONGITUD,
+#             lat = ~ LATITUD,
+#             radius = 3000, # 3km radius
+#             color = "#FF5733",
+#             fillOpacity = 0.7,
+#             weight = 1
+#           )
+#       })
+# 
+#       # Optionally add clusters
+#       if (input$showClusters) {
+#         base_map <- base_map %>%
+#           addCircleMarkers(
+#             data = df,
+#             lng = ~ LONGITUD,
+#             lat = ~ LATITUD,
+#             radius = 2,
+#             color = "#FFFFFF",
+#             fillOpacity = 0.5,
+#             weight = 1,
+#             clusterOptions = markerClusterOptions(
+#               maxClusterRadius = 30,
+#               spiderfyOnMaxZoom = TRUE
+#             )
+#           )
+#       }
+#     }
+# 
+#     base_map
+#   })
+# 
+#   # output$timeline ----
+#   # output$timeline <- renderPlotly({
+#   #   df <- selected_data()
+#   #
+#   #   validate(
+#   #     need(
+#   #       all(c("fecha_hecho") %in% colnames(df)),
+#   #       "El conjunto seleccionado no contiene datos válidos para la línea de tiempo"
+#   #     )
+#   #   )
+#   #
+#   #   # Use cantidad if available, otherwise count events
+#   #   if ("cantidad" %in% colnames(df)) {
+#   #     df_time <- df %>%
+#   #       mutate(fecha_hecho = as.Date(fecha_hecho)) %>%
+#   #       group_by(fecha_hecho) %>%
+#   #       summarize(cantidad = sum(cantidad, na.rm = TRUE), .groups = "drop")
+#   #     y_label <- "Cantidad"
+#   #   } else {
+#   #     df_time <- df %>%
+#   #       mutate(fecha_hecho = as.Date(fecha_hecho)) %>%
+#   #       group_by(fecha_hecho) %>%
+#   #       summarize(cantidad = n(), .groups = "drop")
+#   #     y_label <- "Número de Intervenciones"
+#   #   }
+#   #
+#   #   p <- ggplot(df_time, aes(x = fecha_hecho, y = cantidad)) +
+#   #     geom_line(color = "#00BFC4", size = 1) +
+#   #     geom_point(color = "#FFFFFF", size = 2, alpha = 0.8) +
+#   #     labs(
+#   #       title = "Intervenciones a lo Largo del Tiempo",
+#   #       x = "Fecha",
+#   #       y = y_label
+#   #     ) +
+#   #     theme_minimal() +
+#   #     theme(
+#   #       plot.background = element_rect(fill = "#1e1e1e", color = NA),
+#   #       panel.background = element_rect(fill = "#1e1e1e", color = NA),
+#   #       text = element_text(color = "#ffffff"),
+#   #       axis.text = element_text(color = "#ffffff"),
+#   #       axis.title = element_text(color = "#ffffff")
+#   #     )
+#   #
+#   #   ggplotly(p) %>%
+#   #     layout(hovermode = "x")
+#   #})
+# 
+#   output$heatmapTime <- renderPlotly({
+#     df <- selected_data()
+# 
+#     # use MUNICIPIO or create a geographic grouping
+#     geo_column <-
+#       ifelse(
+#         "municipio" %in% colnames(df),
+#         "municipio",
+#         ifelse(
+#           "municipio" %in% colnames(df),
+#           "DEPARTAMENTO", #corrected
+#           NA
+#         )
+#       )
+# 
+#     validate(
+#       need(
+#         all(c("fecha_hecho") %in% colnames(df)) &&
+#           !is.na(geo_column),
+#         "El conjunto seleccionado no contiene datos válidos para el mapa de calor temporal"
+#       )
+#     )
+# 
+#     # Aggregate data by month and geographic unit
+#     df_agg <- df %>%
+#       mutate(
+#         month = floor_date(as.Date(fecha_hecho), "month"),
+#         geo_unit = df[[geo_column]]
+#       ) %>%
+#       group_by(month, geo_unit) %>%
+#       summarize(
+#         count = n(),
+#         total_cantidad = if ("cantidad" %in% colnames(df))
+#           sum(cantidad, na.rm = TRUE)
+#         else
+#           n(),
+#         .groups = "drop"
+#       ) %>%
+#       mutate(month_label = format(month, "%b %Y"))
+# 
+#     # Create heatmap
+#     z_value <-
+#       ifelse("cantidad" %in% colnames(df), "total_cantidad", "count")
+#     z_label <-
+#       ifelse("cantidad" %in% colnames(df), "Total", "Número de Intervenciones")
+# 
+#     plot_ly(
+#       df_agg,
+#       x = ~ month,
+#       y = ~ geo_unit,
+#       z = ~ get(z_value),
+#       type = "heatmap",
+#       colorscale = "Viridis",
+#       hovertemplate = paste(
+#         "<b>%{y}</b><br>",
+#         "Fecha: %{x|%b %Y}<br>",
+#         paste0(z_label, ": %{z}<br>"),
+#         "<extra></extra>"
+#       )
+#     ) %>%
+#       layout(
+#         title = paste0(
+#           "Distribución de Intervenciones por ",
+#           ifelse(
+#             geo_column == "DEPARTAMENTO",
+#             "Departamento",
+#             "Municipio"
+#           ),
+#           " y Tiempo"
+#         ),
+#         xaxis = list(
+#           title = "Mes",
+#           gridcolor = "#555555",
+#           tickformat = "%b %Y"
+#         ),
+#         yaxis = list(
+#           title = ifelse(
+#             geo_column == "DEPARTAMENTO",
+#             "Departamento",
+#             "Municipio"
+#           ),
+#           gridcolor = "#555555"
+#         ),
+#         paper_bgcolor = "#1e1e1e",
+#         plot_bgcolor = "#1e1e1e",
+#         font = list(color = "#ffffff")
+#       )
+#   })
+# }
+# 
+# shinyApp(ui, server)
+# 
+# #
