@@ -627,7 +627,7 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       class = "sidebar-panel",
-      selectInput("dataset", "Campos de acción:", choices = names(working_data)),
+      selectInput("dataset", "Acción:", choices = names(working_data)),
       
       ## Descripción del dataset ----
       div(

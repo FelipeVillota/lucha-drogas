@@ -38,7 +38,7 @@ dataset_descriptions <- sapply(names(working_data), function(dataset) {
   }
   
   descriptions <- c(
-    "ASPERSION" = "Zonas de aspersión aérea sobre cultivos ilícitos.",
+    "ASPERSION" = "Las zonas de aspersión aérea sobre cultivos ilícitos en Colombia han sido un punto clave en la lucha contra el narcotráfico y, al mismo tiempo, un tema de fuerte controversia. Desde finales del siglo XX, el gobierno colombiano, con apoyo de Estados Unidos a través del Plan Colombia, ha utilizado la fumigación con glifosato para erradicar cultivos de coca, amapola y marihuana en regiones como el Catatumbo, el Putumayo, el Guaviare y el Cauca. Sin embargo, esta estrategia ha generado debates debido a sus impactos ambientales y sociales, pues comunidades campesinas e indígenas han denunciado la afectación de sus fuentes de agua, cultivos legales y salud. En 2015, la Corte Constitucional suspendió la aspersión con glifosato debido a sus posibles efectos cancerígenos, pero en los años recientes ha habido intentos de reactivar su uso en el marco de la política antidrogas del país.",
     "DESTRUCCIÓN INFRAESTRUCTURAS PARA LA PRODUCCIÓN DE DROGAS ILÍCITAS" = "Labores de destrucción de laboratorios y centros de producción.",
     "ERRADICACIÓN" = "Registros de erradicación manual y forzosa de cultivos ilícitos.",
     "INCAUTACIÓN DE BASE DE COCA" = "Confiscaciones en distintas regiones.",
