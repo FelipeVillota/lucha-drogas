@@ -660,6 +660,21 @@ ui <- fluidPage(
         )
       ),
       
+      # Data Sampling Option for large datasets
+      div(
+        class = "time-control",
+        h4("Optimización"),
+        checkboxInput("sampleData", "Muestrear datos grandes (más rápido)", value = TRUE),
+        sliderInput(
+          "sampleSize",
+          "Tamaño de muestra máxima:",
+          min = 1000,
+          max = 20000,
+          value = 10000,
+          step = 1000,
+          animate = FALSE
+        )
+      ),
       # Loading status indicator
       div(
         id = "loading-status",
