@@ -3,6 +3,7 @@
 library(readxl)
 library(tidyverse)
 library(skimr)
+library(future.apply)
 
 #-------------------------------Data source--------------------------------------
 #
@@ -26,7 +27,7 @@ xlsx_files <- list.files(path = data_path, pattern = "\\.xlsx$", full.names = TR
 data_frame_list <- list()
 
 # Each xlsx into a df in the list
-data_frame_list <- lapply(xlsx_files, read_xlsx)
+data_frame_list <- future_lapply(xlsx_files, read_xlsx)
 
 # Name the list elements with the original file names (without extension)
 names(data_frame_list) <- tools::file_path_sans_ext(basename(xlsx_files))
@@ -56,7 +57,7 @@ length(working_data)
 names(working_data)
 
 # Apply skim to each dataset in the list
-skim_results <- lapply(working_data, skim)
+skim_results <- future_lapply(working_data, skim)
 
 # Save skim results to a text file
 sink("skim_results.txt")
@@ -75,7 +76,7 @@ print(combined_skim_results)
 ### Common columns
 
 # Extract column names from each data frame in the list
-column_names_list <- lapply(working_data, names)
+column_names_list <- future_lapply(working_data, names)
 
 # Find common column names across all data frames
 common_columns <- Reduce(intersect, column_names_list)
@@ -96,19 +97,19 @@ print(uncommon_cols) # "UNIDADES DE MEDIDA" "UNIDAD DE MEDIDA"   "TIPO CULTIVO"
 # Another approach to detect errors in the name of the column of units of measurement
 # Shows dataset name along with its unique units
 
-units_by_dataset <- lapply(working_data, function(df) {
+units_by_dataset <- future_lapply(working_data, function(df) {
   sort(unique(df$`UNIDADES DE MEDIDA`))
 })
 print(units_by_dataset)
 
 # Standard name ---> UNIDAD
 
-working_data <- lapply(working_data, function(df) {
+working_data <- future_lapply(working_data, function(df) {
   names(df)[names(df) %in% c("UNIDADES DE MEDIDA", "UNIDAD DE MEDIDA")] <- "UNIDAD"
   return(df)
 })
 
-units_clean <- lapply(working_data, function(df) {
+units_clean <- future_lapply(working_data, function(df) {
   sort(unique(df$`UNIDAD`))
 })
 
@@ -122,12 +123,12 @@ sink()
 
 library(janitor)
 
-working_data <- lapply(working_data, function(df) {
+working_data <- future_lapply(working_data, function(df) { 
   clean_names(df) # Convert column names to snake_case
 })
 
 # View column names for each df
-lapply(working_data, colnames) 
+future_lapply(working_data, colnames) 
 
 
 ### Types of crop eradicated 
@@ -156,7 +157,7 @@ library(scales)
 
 
 # Function to calculate the total "cantidad" per "unidad" and the time range in years, months, and days
-total_cantidad_per_df <- lapply(names(working_data), function(df_name) {
+total_cantidad_per_df <- future_lapply(names(working_data), function(df_name) {
   df <- working_data[[df_name]]  # Extract the data frame
   
   if (all(c("cantidad", "unidad", "fecha_hecho") %in% names(df))) {
@@ -281,7 +282,7 @@ remove_first_zero <- function(df) {
 ## Merge ----
 
 # Step 1:Apply the function to each data frame in the working_data list
-working_data <- lapply(working_data, remove_first_zero)
+working_data <- future_lapply(working_data, remove_first_zero)
 
 # Step 2: Define a function to perform the merge for a single data frame
 merge_with_divipola <- function(df) {
@@ -291,19 +292,19 @@ merge_with_divipola <- function(df) {
 }
 
 # Step 3: Apply the function to all data frames in the working_data list
-working_data <- lapply(working_data, merge_with_divipola)
+working_data <- future_lapply(working_data, merge_with_divipola)
 
 
 #-----------------Geo transformations and completions--------------------------
 
 sink("skim_geo.txt")
-lapply(working_data, skim)
+future_lapply(working_data, skim)
 sink()
 
 ### NAs 
 
 library(naniar) #
-lapply(working_data, gg_miss_var)
+future_lapply(working_data, gg_miss_var)
 
 ## NAs in a data frame----
 
@@ -313,7 +314,7 @@ find_na_rows <- function(df) {
 }
 
 # Apply the function to each data frame in the working_data list
-na_rows_list <- lapply(working_data, find_na_rows)
+na_rows_list <- future_lapply(working_data, find_na_rows)
 
 # Print the rows with NAs for each data frame
 for (i in seq_along(na_rows_list)) {
@@ -330,7 +331,7 @@ for (i in seq_along(na_rows_list)) {
 # Resumen lugares sin geolocalización y por tanto NAs en working_data-----
 
 sink("missing-places.txt")
-lapply(na_rows_list, function(df) {
+future_lapply(na_rows_list, function(df) {
   # Check if the "municipio" column exists in the data frame
   if ("municipio" %in% colnames(df)) {
     # Extract unique municipios
@@ -544,19 +545,19 @@ working_data[["INCAUTACIÓN DE COCAINA"]] <- working_data[["INCAUTACIÓN DE COCA
 ##------------ Dropping unnecessary columns ----------
 
 # Actualización de NAs
-na_rows_list <- lapply(working_data, find_na_rows)
+na_rows_list <- future_lapply(working_data, find_na_rows)
 
 
 # "cod_depto", "cod_muni", Geo.Municipio
 
 cols_to_drop <- c("cod_depto", "cod_muni", "Geo.Municipio")
 
-working_data <- lapply(working_data, function(df) {
+working_data <- future_lapply(working_data, function(df) {
   df %>% select(-any_of(cols_to_drop))
 })
 
 # Actualización de NAs
-na_rows_list <- lapply(working_data, find_na_rows)
+na_rows_list <- future_lapply(working_data, find_na_rows)
 
 
 # Coordenadas del del resto, junto con cod_muni y cod_depto
@@ -719,7 +720,7 @@ working_data[["INCAUTACIÓN DE COCAINA"]] <-
   )
 
 
-na_rows_list <- lapply(working_data, find_na_rows)
+na_rows_list <- future_lapply(working_data, find_na_rows)
 
 #### 5. INCAUTACIÓN DE HEROÍNA --------------
 
@@ -790,7 +791,7 @@ working_data[["INCAUTACIÓN DE HEROINA"]] <-
   )
 
 
-na_rows_list <- lapply(working_data, find_na_rows)
+na_rows_list <- future_lapply(working_data, find_na_rows)
 
 
 #### 6. INCAUTACIÓN DE MARIHUANA ------------
@@ -872,4 +873,4 @@ working_data[["INCAUTACIÓN DE MARIHUANA"]] <-
   )
 
 
-na_rows_list <- lapply(working_data, find_na_rows)
+na_rows_list <- future_lapply(working_data, find_na_rows)
