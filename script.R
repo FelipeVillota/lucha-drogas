@@ -874,3 +874,6 @@ working_data[["INCAUTACIÓN DE MARIHUANA"]] <-
 
 
 na_rows_list <- future_lapply(working_data, find_na_rows)
+
+
+
