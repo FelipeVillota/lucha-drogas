@@ -1,3 +1,9 @@
+# COLOMBIA VS DROGAS - DATA VISUALIZATION APP
+#
+# Author: Luis Felipe Villota Macías
+# Description: Shiny application for visualizing drug intervention data in Colombia
+
+# Libraries ----
 library(shiny)
 library(leaflet)
 library(leaflet.extras)
@@ -7,7 +13,7 @@ library(DT)
 library(tidyverse)
 library(lubridate)
 
-# UI -------
+# UI ----
 ui <- fluidPage(
   tags$head(
     tags$style(
@@ -27,6 +33,9 @@ ui <- fluidPage(
           color: white;
           background-color: rgba(0,0,0,0.7);
           border-radius: 5px;
+        }
+        .leaflet-control-minimap {
+          border: 2px solid rgba(255, 255, 255, 0.5) !important;
         }
         "
       )
@@ -59,17 +68,20 @@ ui <- fluidPage(
       )
     )
   ),
-
+  
+  # Sidebar layout ----
   sidebarLayout(
     sidebarPanel(
       class = "sidebar-panel",
       selectInput("dataset", "Acción:", choices = names(working_data)),
-
+      
+      # Dataset description ----
       div(
         style = "margin-top: 20px; font-style: italic; color: #bbbbbb;",
         htmlOutput("dataset_description")
       ),
-
+      
+      # Map Configuration ----
       div(
         class = "time-control",
         h4("Configuración del mapa"),
@@ -92,7 +104,8 @@ ui <- fluidPage(
           animate = FALSE
         )
       ),
-
+      
+      # Loading Status ----
       div(
         id = "loading-status",
         class = "loading-indicator",
@@ -103,12 +116,16 @@ ui <- fluidPage(
         )
       )
     ),
+    
+    # Main panel ----
     mainPanel(
       class = "main-panel",
       tabsetPanel(
         id = "mainTabs",
+        
+        # Map tab ----
         tabPanel(
-          "Mapa de Calor",
+          "Mapa de Calor (Cantidades Intervenidas)",
           value = "map_tab",
           div(
             style = "position:relative;",
@@ -122,6 +139,8 @@ ui <- fluidPage(
                 "Cargando mapa..."
               )
             ),
+            
+            # Absolute panel for checkbox ----
             absolutePanel(
               bottom = 10,
               left = 10,
@@ -129,9 +148,11 @@ ui <- fluidPage(
                 "z-index:500; background-color: rgba(240,240,240,0.8); padding: 8px; border-radius: 5px;",
                 "box-shadow: 0 0 15px rgba(0,0,0,0.2); color: black;"
               ),
-              checkboxInput("showClusters", tags$span("Mostrar Clusters (Agregación de eventos)", style = "color: black;"), value = FALSE, width = "100%")
+              checkboxInput("showClusters", tags$span("Número de Intervenciones (Clusters por Municipio)", style = "color: black;"), value = FALSE, width = "100%")
             )
           ),
+          
+          # Timeline plot ----
           div(
             style = "position:relative; margin-top: 10px;",
             plotlyOutput("timeline", height = "30vh"),
@@ -146,8 +167,10 @@ ui <- fluidPage(
             )
           )
         ),
+        
+        # Heatmap tab ----
         tabPanel(
-          "Distribución Temporal",
+          "Distribución Temporal por Municipio",
           value = "heatmap_tab",
           div(
             style = "position:relative;",
@@ -158,12 +181,14 @@ ui <- fluidPage(
               style = "display:none; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);",
               tags$div(
                 class = "loading-spinner",
-                "Cargando mapa de calor..."
+                "Cargando distribución temporal..."
               )
             )
           ),
+          
+          # Description ----
           p(
-            "El mapa de calor muestra la concentración de intervenciones a lo largo del tiempo y por municipio."
+            "Aquí se muestra la concentración de intervenciones a lo largo del tiempo y por municipio."
           )
         )
       )
@@ -171,21 +196,24 @@ ui <- fluidPage(
   )
 )
 
-# Server----
+# Server ----
 server <- function(input, output, session) {
+  
+  # Reactive values ----
   dataset_cache <- reactiveVal(list())
   processing_status <- reactiveVal("idle")
-
+  
+  # Selected data ----
   selected_data <- reactive({
     req(input$dataset)
     processing_status("loading")
-
+    
     cached_data <- dataset_cache()[[input$dataset]]
     if (!is.null(cached_data)) {
       processing_status("idle")
       return(cached_data)
     }
-
+    
     df <- working_data[[input$dataset]] %>%
       filter(
         !is.na(LATITUD),
@@ -193,14 +221,14 @@ server <- function(input, output, session) {
         between(LATITUD, -4.23, 13.5),
         between(LONGITUD, -82.0, -66.87)
       )
-
+    
     validate(
       need(
         nrow(df) > 0,
         "El conjunto seleccionado no contiene coordenadas válidas"
       )
     )
-
+    
     if ("fecha_hecho" %in% colnames(df)) {
       tryCatch({
         df <- df %>% mutate(fecha_hecho = as.Date(fecha_hecho))
@@ -208,18 +236,19 @@ server <- function(input, output, session) {
         df$fecha_hecho <- as.Date(NA)
       })
     }
-
+    
     current_cache <- dataset_cache()
     current_cache[[input$dataset]] <- df
     dataset_cache(current_cache)
-
+    
     processing_status("idle")
     return(df)
   })
-
+  
+  # Map data ----
   map_data <- reactive({
     df <- selected_data()
-
+    
     list(
       data = df,
       center = list(
@@ -229,7 +258,8 @@ server <- function(input, output, session) {
       zoom = ifelse(nrow(df) > 1000, 5, 7)
     )
   })
-
+  
+  # Observe processing status ----
   observe({
     status <- processing_status()
     if (status == "loading") {
@@ -238,23 +268,26 @@ server <- function(input, output, session) {
       shinyjs::hide("loading-status")
     }
   })
-
+  
+  # Dataset description memo ----
   dataset_desc_memo <- memoise::memoise(function(dataset_name) {
     dataset_descriptions[[dataset_name]]
   })
-
+  
+  # Output dataset description ----
   output$dataset_description <- renderUI({
     req(input$dataset)
     desc <- dataset_desc_memo(input$dataset)
     HTML(paste0("<strong>Descripción:</strong> ", desc))
   })
-
+  
+  # Output map ----
   output$map <- renderLeaflet({
     map_info <- map_data()
     df <- map_info$data
-
+    
     validate(need(nrow(df) > 0, "No hay datos válidos para mostrar"))
-
+    
     leaflet(options = leafletOptions(preferCanvas = TRUE)) %>%
       addProviderTiles(providers$CartoDB.DarkMatter) %>%
       setView(
@@ -271,23 +304,51 @@ server <- function(input, output, session) {
         blur = input$heatRadius * 1.5,
         max = input$heatIntensity,
         gradient = c("#0000FF", "#00FFFF", "#00FF00", "#FFFF00", "#FF0000")
+      ) %>%
+      # Add mini map to bottom right corner
+      addMiniMap(
+        tiles = providers$CartoDB.DarkMatter,
+        toggleDisplay = TRUE,
+        position = "bottomright",
+        width = 150,
+        height = 150,
+        zoomLevelOffset = -5,
+        zoomAnimation = FALSE,
+        autoToggleDisplay = TRUE,
+        minimized = FALSE,
+        aimingRectOptions = list(
+          color = "#FF0000",
+          weight = 1,
+          fillOpacity = 0.3
+        ),
+        shadowRectOptions = list(
+          color = "#0000FF",
+          weight = 1,
+          fillOpacity = 0,
+          fillColor = "#0000FF"
+        ),
+        strings = list(
+          hideText = "Ocultar Mini Mapa",
+          showText = "Mostrar Mini Mapa"
+        )
       )
   })
-
+  
+  # Observe show clusters ----
   observe({
     req(input$showClusters, map_data())
     df <- map_data()$data
-
+    
     map_proxy <- leafletProxy("map")
     map_proxy %>% clearMarkerClusters()
-
+    
     if (input$showClusters) {
       popup_content <- ~paste(
         if ("municipio" %in% colnames(df)) paste0("<b>Municipio:</b> ", municipio, "<br/>"),
         if ("fecha_hecho" %in% colnames(df)) paste0("<b>Fecha:</b> ", format(fecha_hecho, "%d-%m-%Y"), "<br/>"),
         if ("cantidad" %in% colnames(df)) paste0("<b>Cantidad:</b> ", cantidad)
       )
-
+      
       map_proxy %>%
         addCircleMarkers(
           data = df,
@@ -305,45 +366,106 @@ server <- function(input, output, session) {
         )
     }
   })
-
+  
+  # Output timeline ----
   output$timeline <- renderPlotly({
     req(input$mainTabs == "map_tab")
     df <- selected_data()
-
+    
     validate(need("fecha_hecho" %in% colnames(df), "Datos temporales no disponibles"))
-
+    
+    # Aggregate data by month for the timeline
     df_time <- df %>%
       mutate(month = floor_date(as.Date(fecha_hecho), "month")) %>%
       count(month, name = "cantidad")
-
-    p <- ggplot(df_time, aes(x = month, y = cantidad)) +
-      geom_line(color = "#00BFC4", size = 1) +
-      geom_point(color = "#FFFFFF", size = 2, alpha = 0.8) +
-      labs(x = "Fecha", y = "Número de Intervenciones") +
-      theme_minimal() +
-      theme(
-        plot.background = element_rect(fill = "#1e1e1e"),
-        panel.background = element_rect(fill = "#1e1e1e"),
-        text = element_text(color = "white"),
-        axis.text = element_text(color = "white")
+    
+    # Add missing dates for continuity
+    if (nrow(df_time) > 1) {
+      date_range <- seq(
+        from = min(df_time$month, na.rm = TRUE),
+        to = max(df_time$month, na.rm = TRUE),
+        by = "month"
       )
-
-    ggplotly(p) %>% layout(hovermode = "x")
+      
+      all_dates <- data.frame(month = date_range)
+      
+      df_time <- all_dates %>%
+        left_join(df_time, by = "month") %>%
+        mutate(cantidad = replace_na(cantidad, 0))
+    }
+    
+    # Create a column for color mapping based on quantity
+    df_time <- df_time %>%
+      mutate(cantidad_norm = scales::rescale(cantidad, to = c(0, 1)))
+    
+    # Create Plotly directly instead of ggplot for better control
+    p <- plot_ly(
+      df_time,
+      x = ~month,
+      y = ~cantidad,
+      type = 'scatter',
+      mode = 'lines+markers',
+      line = list(
+        color = '#440154',
+        width = 2
+      ),
+      marker = list(
+        size = 8,
+        color = ~viridis::viridis(length(month))[rank(cantidad_norm)],
+        line = list(width = 1, color = '#FFFFFF')
+      ),
+      hoverinfo = 'text',
+      text = ~paste(
+        '<b>Fecha:</b>', format(month, "%B %Y"),
+        '<br><b>Intervenciones:</b>', cantidad
+      )
+    ) %>%
+      layout(
+        title = list(
+          text = "Evolución Temporal de Intervenciones",
+          font = list(size = 16, color = '#FFFFFF')
+        ),
+        xaxis = list(
+          title = "Fecha",
+          gridcolor = '#444444',
+          zerolinecolor = '#666666',
+          tickformat = "%b %Y",
+          tickangle = -45,
+          hoverformat = "%b %Y",
+          tickfont = list(color = '#FFFFFF'),
+          titlefont = list(color = '#FFFFFF')
+        ),
+        yaxis = list(
+          title = "Número",
+          gridcolor = '#444444',
+          zerolinecolor = '#666666',
+          tickfont = list(color = '#FFFFFF'),
+          titlefont = list(color = '#FFFFFF')
+        ),
+        plot_bgcolor = '#1e1e1e',
+        paper_bgcolor = '#1e1e1e',
+        margin = list(l = 60, r = 30, b = 60, t = 40),
+        hovermode = 'x unified',
+        showlegend = FALSE
+      )
+    
+    return(p)
   })
-
+  
+  # Output heatmap time ----
   output$heatmapTime <- renderPlotly({
     req(input$mainTabs == "heatmap_tab")
     df <- selected_data()
-
+    
     geo_column <- first(intersect(c("municipio", "MUNICIPIO", "DEPARTAMENTO"), colnames(df)))
-
+    
     validate(
       need(
         !is.null(geo_column) && "fecha_hecho" %in% colnames(df),
         "Datos requeridos no disponibles"
       )
     )
-
+    
     df_agg <- df %>%
       mutate(
         month = floor_date(as.Date(fecha_hecho), "month"),
@@ -352,17 +474,17 @@ server <- function(input, output, session) {
       count(month, geo_unit, name = "total") %>%
       filter(total > 0) %>%
       arrange(month)
-
+    
     if (n_distinct(df_agg$geo_unit) > 30) {
       top_locations <- df_agg %>%
         group_by(geo_unit) %>%
         summarize(total = sum(total)) %>%
         slice_max(total, n = 3000) %>%
         pull(geo_unit)
-
+      
       df_agg <- df_agg %>% filter(geo_unit %in% top_locations)
     }
-
+    
     plot_ly(
       df_agg,
       x = ~month,
@@ -376,9 +498,11 @@ server <- function(input, output, session) {
     ) %>%
       layout(
         xaxis = list(title = "Mes"),
-        yaxis = list(title = "Lugar")) %>%  layout(yaxis = list(categoryorder = "total ascending"))
+        yaxis = list(title = "Lugar"),
+        yaxis = list(categoryorder = "total ascending")
+      )
   })
 }
 
+# Shiny app ----
 shinyApp(ui = ui, server = server)
-
