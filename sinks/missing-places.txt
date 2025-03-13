@@ -1,0 +1,47 @@
+$ASPERSION
+character(0)
+
+$`DESTRUCCIÓN INFRAESTRUCTURAS PARA LA PRODUCCIÓN DE DROGAS ILÍCITAS`
+[1] "SIN ESTABLECER" "VENEZUELA"      "MAPIRIPANA"     "PERU"          
+
+$ERRADICACIÓN
+[1] "PUERTO ASIS" "NARIÑO"      "SAN CARLOS"  "SAN LUIS"    "EL CHARCO"   "SAN MIGUEL" 
+
+$`INCAUTACIÓN DE BASE DE COCA`
+[1] "PERU"                  "MAPIRIPANA"            "BRASIL"                "CHILE"                 "ESPAÑA"               
+[6] "AGUAS INTERNACIONALES" "ECUADOR"              
+
+$`INCAUTACIÓN DE BASUCO`
+character(0)
+
+$`INCAUTACIÓN DE COCAINA`
+ [1] "SIN ESTABLECER"            "MIAMI"                     "PANAMA"                    "ECUADOR"                  
+ [5] "MADRID"                    "JAMAICA"                   "BELGICA"                   "COSTA RICA"               
+ [9] "NICARAGUA"                 "GUATEMALA"                 "HONDURAS"                  "MAR PACIFICO"             
+[13] "HOLANDA"                   "INGLATERRA"                "ITALIA"                    "AARHUS"                   
+[17] "MEXICO"                    "VENEZUELA"                 "PERU"                      "REPUBLICA DOMINICANA"     
+[21] "EL SALVADOR"               "FRANCIA"                   "BRASIL"                    "ANTILLAS HOLANDESAS"      
+[25] "PUERTO RICO"               "ALBANIA"                   "ALEMANIA"                  "PORTUGAL"                 
+[29] "ARUBA"                     "BELICE"                    "CHINA"                     "AGUAS INTERNACIONALES"    
+[33] "SUDAFRICA"                 "PARAGUAY"                  "RUMANIA"                   "CROACIA"                  
+[37] "ESPAÑA"                    "AGUAS JURISDICCIONALES"    "ESTADOS UNIDOS"            "PAISES BAJOS"             
+[41] "DOVER"                     "CANADA"                    "MACEDONIA"                 "MALTA"                    
+[45] "CURAZAO"                   "LA HABANA"                 "BAHAMAS"                   "CHILE"                    
+[49] "SURINAN"                   "ESTADOS UNIDOS DE AMERICA" "UCRANIA"                   "REINO UNIDO"              
+[53] "ANTILLAS NEERLANDESAS"     "ISLAS VIRGENES BRITANICAS" "TURQUIA"                   "GUINEA"                   
+[57] "SURINAM"                   "CABO VERDE"                "RUSIA"                     "LIBERIA"                  
+[61] "GUAYANA"                   "MARTINICA"                 "PUERTO VLISSINGEN"         "ARGENTINA"                
+[65] "GUINEA BISSAU"             "URUGUAY"                  
+
+$`INCAUTACIÓN DE HEROINA`
+[1] "SIN ESTABLECER"            "MIAMI"                     "COSTA RICA"                "PANAMA"                   
+[5] "GUATEMALA"                 "ECUADOR"                   "ESTADOS UNIDOS"            "AGUAS INTERNACIONALES"    
+[9] "ESTADOS UNIDOS DE AMERICA"
+
+$`INCAUTACIÓN DE MARIHUANA`
+ [1] "PANAMA"                    "MAR PACIFICO"              "COSTA RICA"                "VENEZUELA"                
+ [5] "BRASIL"                    "PERU"                      "CHILE"                     "HONDURAS"                 
+ [9] "ECUADOR"                   "MADRID"                    "AGUAS INTERNACIONALES"     "REPUBLICA DOMINICANA"     
+[13] "ARUBA"                     "FRANCIA"                   "ESPAÑA"                    "BOLIVIA"                  
+[17] "ESTADOS UNIDOS DE AMERICA" "PUERTO VLISSINGEN"         "ANTILLAS NEERLANDESAS"     "BAHAMAS"                  
+

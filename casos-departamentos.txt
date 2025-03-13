@@ -1,0 +1,154 @@
+Frequency table for ASPERSION :
+
+         ANTIOQUIA             ARAUCA            BOLÍVAR             BOYACÁ             CALDAS            CAQUETÁ              CAUCA 
+               915                160                479                 21                 39               1005                508 
+             CESAR              CHOCÓ            CÓRDOBA       CUNDINAMARCA           GUAVIARE              HUILA         LA GUAJIRA 
+                37                347                198                  5               1365                 62                 14 
+         MAGDALENA               META             NARIÑO NORTE DE SANTANDER           PUTUMAYO          SANTANDER             TOLIMA 
+                16                948               2226                225                966                117                 56 
+   VALLE DEL CAUCA             VAUPÉS            VICHADA 
+                50                 10                120 
+
+Frequency table for DESTRUCCIÓN INFRAESTRUCTURAS PARA LA PRODUCCIÓN DE DROGAS ILÍCITAS :
+
+          AMAZONAS          ANTIOQUIA             ARAUCA          ATLANTICO          ATLÁNTICO        BOGOTÁ D.C.            BOLIVAR 
+                48               3095                 51                  1                  5                  8                 99 
+           BOLÍVAR             BOYACA             BOYACÁ             CALDAS            CAQUETA            CAQUETÁ           CASANARE 
+              1111                 17                228                 56                143               1793                 51 
+             CAUCA              CESAR              CHOCO              CHOCÓ            CORDOBA            CÓRDOBA       CUNDINAMARCA 
+              3459                143                313               1190                214                551                132 
+           GUAINIA            GUAINÍA           GUAVIARE              HUILA         LA GUAJIRA          MAGDALENA               META 
+                 2                 25               1846                 10                 13                 78               1770 
+            NARIÑO NORTE DE SANTANDER               PERU           PUTUMAYO          RISARALDA          SANTANDER     SIN ESTABLECER 
+              4791               4934                  6               5718                 20                364                  1 
+             SUCRE             TOLIMA    VALLE DEL CAUCA             VAUPÉS          VENEZUELA            VICHADA 
+                 3                 37                626                 41                  6                771 
+
+Frequency table for ERRADICACIÓN :
+
+          AMAZONAS          ANTIOQUIA             ARAUCA            BOLIVAR            BOLÍVAR             BOYACA             BOYACÁ 
+               423              21227                390               6045               6036                187               1381 
+            CALDAS            CAQUETA            CAQUETÁ           CASANARE              CAUCA              CESAR              CHOCO 
+               776               4247               7116                  4               7063               1249               2398 
+             CHOCÓ            CORDOBA            CÓRDOBA       CUNDINAMARCA            GUAINÍA           GUAVIARE              HUILA 
+              4006               2148               3225                578                142               8187                 87 
+        LA GUAJIRA          MAGDALENA               META             NARIÑO NORTE DE SANTANDER           PUTUMAYO          RISARALDA 
+               541               2333               7095              15165              11871              18317                 75 
+         SANTANDER             TOLIMA    VALLE DEL CAUCA             VAUPES             VAUPÉS            VICHADA 
+              5168                453               2148                102                386               3447 
+
+Frequency table for INCAUTACIÓN DE BASE DE COCA :
+
+AGUAS INTERNACIONALES              AMAZONAS             ANTIOQUIA                ARAUCA             ATLANTICO           BOGOTA D.C. 
+                    1                   284                 99649                   203                 15629                  9570 
+              BOLIVAR                BOYACA                BRASIL                CALDAS               CAQUETA              CASANARE 
+                14052                   953                     6                  8159                  3095                   361 
+                CAUCA                 CESAR                 CHILE                 CHOCO               CORDOBA          CUNDINAMARCA 
+                 2941                  4768                     4                  1129                  5744                 10475 
+              ECUADOR                ESPAÑA               GUAINIA              GUAVIARE                 HUILA            LA GUAJIRA 
+                    1                     2                   177                  2227                  1580                   983 
+            MAGDALENA                  META                NARIÑO    NORTE DE SANTANDER                  PERU              PUTUMAYO 
+                 2937                  3038                  4824                 11414                     8                  4226 
+              QUINDIO             RISARALDA      SAN ANDRES ISLAS             SANTANDER                 SUCRE                TOLIMA 
+                 9422                  6731                    21                  9108                  6617                  1699 
+      VALLE DEL CAUCA                VAUPES               VICHADA 
+                52787                    91                   377 
+
+Frequency table for INCAUTACIÓN DE BASUCO :
+
+          AMAZONAS          ANTIOQUIA             ARAUCA          ATLANTICO        BOGOTA D.C.            BOLIVAR             BOYACA 
+              3023              85868                611               5232              48068               4770               3788 
+            CALDAS            CAQUETA           CASANARE              CAUCA              CESAR              CHOCO            CORDOBA 
+             27367                774               1294               4316               4413                595               2378 
+      CUNDINAMARCA            GUAINIA           GUAVIARE              HUILA         LA GUAJIRA          MAGDALENA               META 
+             47825                128                567               5977                867               2921               5078 
+            NARIÑO NORTE DE SANTANDER           PUTUMAYO            QUINDIO          RISARALDA   SAN ANDRES ISLAS          SANTANDER 
+             10235               4913               1199               9179              11881                329              20525 
+             SUCRE             TOLIMA    VALLE DEL CAUCA             VAUPES            VICHADA 
+              2315               6223             120179                145                141 
+
+Frequency table for INCAUTACIÓN DE COCAINA :
+
+    AGUAS INTERNACIONALES                   ALBANIA                  ALEMANIA                  AMAZONAS       ANTILLAS HOLANDESAS 
+                      125                         2                        12                       385                        14 
+    ANTILLAS NEERLANDESAS                 ANTIOQUIA                    ARAUCA                 ARGENTINA                     ARUBA 
+                       12                     52867                       396                         1                        50 
+                ATLANTICO                   BAHAMAS                   BELGICA                    BELICE               BOGOTA D.C. 
+                     5135                        10                        68                         4                     12351 
+                  BOLIVAR                    BOYACA                    BRASIL                CABO VERDE                    CALDAS 
+                     5174                       725                        27                         1                      4706 
+                   CANADA                   CAQUETA                  CASANARE                     CAUCA                     CESAR 
+                        3                      1173                       667                      1879                      2643 
+                    CHILE                     CHINA                     CHOCO                   CORDOBA                COSTA RICA 
+                        3                         1                      1145                      4378                       365 
+                  CROACIA                      CUBA              CUNDINAMARCA                   CURAZAO                 DINAMARCA 
+                        2                         1                      7804                         5                         1 
+                  ECUADOR               EL SALVADOR                    ESPAÑA ESTADOS UNIDOS DE AMERICA                   FRANCIA 
+                      265                        53                       167                        56                        59 
+                  GUAINIA                 GUATEMALA                  GUAVIARE                   GUAYANA                    GUINEA 
+                       50                       140                       580                         3                         1 
+            GUINEA BISSAU                   HOLANDA                  HONDURAS                     HUILA                INGLATERRA 
+                        1                        23                        58                      1566                        46 
+ISLAS VIRGENES BRITANICAS                    ITALIA                   JAMAICA                LA GUAJIRA                   LIBERIA 
+                        2                        18                        15                      1679                         1 
+                MACEDONIA                 MAGDALENA                     MALTA              MAR PACIFICO                 MARTINICA 
+                        1                      3329                         1                        54                         2 
+                     META                    MEXICO                    NARIÑO                 NICARAGUA        NORTE DE SANTANDER 
+                     2149                       176                      3321                        10                      5338 
+             PAISES BAJOS                    PANAMA                  PARAGUAY                      PERU                  PORTUGAL 
+                       20                       702                         2                        25                        16 
+              PUERTO RICO                  PUTUMAYO                   QUINDIO               REINO UNIDO      REPUBLICA DOMINICANA 
+                       48                      1385                      5663                         5                       366 
+                RISARALDA                   RUMANIA                     RUSIA          SAN ANDRES ISLAS                 SANTANDER 
+                     5112                         3                         2                       608                     10557 
+           SIN ESTABLECER                     SUCRE                 SUDAFRICA                   SURINAM                    TOLIMA 
+                       26                      2745                         1                         5                      1818 
+                  TURQUIA                   UCRANIA                   URUGUAY           VALLE DEL CAUCA                    VAUPES 
+                        2                         1                         1                     50726                        46 
+                VENEZUELA                   VICHADA 
+                       39                       185 
+
+Frequency table for INCAUTACIÓN DE HEROINA :
+
+    AGUAS INTERNACIONALES                  AMAZONAS                 ANTIOQUIA                    ARAUCA                 ATLANTICO 
+                        1                         5                      1097                        36                       542 
+              BOGOTA D.C.                   BOLIVAR                    BOYACA                    CALDAS                   CAQUETA 
+                      375                        38                        16                        44                         4 
+                 CASANARE                     CAUCA                     CESAR                     CHOCO                   CORDOBA 
+                        7                       310                       161                         4                        18 
+               COSTA RICA              CUNDINAMARCA                   ECUADOR ESTADOS UNIDOS DE AMERICA                 GUATEMALA 
+                        1                       147                         8                        15                         1 
+                    HUILA                LA GUAJIRA                 MAGDALENA                      META                    NARIÑO 
+                       11                        22                        29                        48                       449 
+       NORTE DE SANTANDER                    PANAMA                  PUTUMAYO                   QUINDIO                 RISARALDA 
+                     1482                         1                         7                      1429                      3459 
+         SAN ANDRES ISLAS                 SANTANDER            SIN ESTABLECER                     SUCRE                    TOLIMA 
+                        1                        51                         7                         3                        69 
+          VALLE DEL CAUCA 
+                     4650 
+
+Frequency table for INCAUTACIÓN DE MARIHUANA :
+
+    AGUAS INTERNACIONALES                  AMAZONAS     ANTILLAS NEERLANDESAS                 ANTIOQUIA                    ARAUCA 
+                       22                      2749                         2                    245200                      1640 
+                    ARUBA                 ATLANTICO                   BAHAMAS               BOGOTA D.C.                   BOLIVAR 
+                       15                     15922                         1                     83214                     18463 
+                  BOLIVIA                    BOYACA                    BRASIL                    CALDAS                   CAQUETA 
+                        1                      7632                        53                     27490                      3572 
+                 CASANARE                     CAUCA                     CESAR                     CHILE                     CHOCO 
+                     3778                     14118                     20193                         7                      1799 
+                  CORDOBA                COSTA RICA              CUNDINAMARCA                   ECUADOR                    ESPAÑA 
+                     9088                        88                     69609                        10                         2 
+ESTADOS UNIDOS DE AMERICA                   FRANCIA                   GUAINIA                  GUAVIARE                  HONDURAS 
+                        2                         1                      1166                      5526                         1 
+                    HUILA                LA GUAJIRA                 MAGDALENA              MAR PACIFICO                      META 
+                    12120                      4453                     11633                         6                     14733 
+                   NARIÑO        NORTE DE SANTANDER              PAISES BAJOS                    PANAMA                      PERU 
+                    15304                     22213                         1                       154                        11 
+                 PUTUMAYO                   QUINDIO      REPUBLICA DOMINICANA                 RISARALDA          SAN ANDRES ISLAS 
+                     3561                     13645                        18                     20373                      1618 
+                SANTANDER                     SUCRE                    TOLIMA           VALLE DEL CAUCA                    VAUPES 
+                    51225                     11523                     10451                    186725                       478 
+                VENEZUELA                   VICHADA 
+                       16                       827 
+
