@@ -35,19 +35,6 @@ names(data_frame_list) <- tools::file_path_sans_ext(basename(xlsx_files))
 ## Keeping the raw data untouched ----
 working_data <- data_frame_list
 
-## Saving working data as RDS----
-# saveRDS(working_data, "C:/Users/USER/Desktop/codebaker/all_r/lucha-drogas/data/working_data.rds")
-
-## Saving working data as multiple CSV files---- 
-
-dir.create("C:/Users/USER/Desktop/codebaker/all_r/lucha-drogas/data/working_data")
-for (name in names(working_data)) {
-  write.csv(working_data[[name]], 
-            file = paste0("C:/Users/USER/Desktop/codebaker/all_r/lucha-drogas/data/working_data/", name, ".csv"), 
-            row.names = FALSE)
-}
-
-
 #---------------------------General EDA-----------------------------------------
 
 # Check the number of datasets in the list
@@ -876,4 +863,16 @@ working_data[["INCAUTACIÓN DE MARIHUANA"]] <-
 na_rows_list <- future_lapply(working_data, find_na_rows)
 
 
+
+# Saving working data as RDS----
+saveRDS(working_data, "C:/Users/USER/Desktop/codebaker/all_r/lucha-drogas/data/working_data.rds")
+
+# Saving working data as multiple CSV files---- 
+
+dir.create("C:/Users/USER/Desktop/codebaker/all_r/lucha-drogas/data/working_data")
+for (name in names(working_data)) {
+  write.csv(working_data[[name]], 
+            file = paste0("C:/Users/USER/Desktop/codebaker/all_r/lucha-drogas/data/working_data/", name, ".csv"), 
+            row.names = FALSE)
+}
 

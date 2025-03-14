@@ -1,7 +1,9 @@
-# COLOMBIA VS DROGAS - DATA VISUALIZATION APP
-#
-# Author: Luis Felipe Villota Macías
-# Description: Shiny application for visualizing drug intervention data in Colombia
+#-----------------------------VERSION 1.0---------------------------------------
+
+# # COLOMBIA VS DROGAS - DATA VISUALIZATION APP
+# #
+# # Author: Luis Felipe Villota Macías
+# # Description: Shiny application for visualizing drug intervention data in Colombia
 
 # Libraries ----
 library(shiny)
@@ -14,9 +16,17 @@ library(tidyverse)
 library(lubridate)
 library(shinyjs)
 
+# Pre-launch sourcing ----
+
 source("output-descripciones.R")
 
-# UI ----
+precomputed <- readRDS("data/preprocessed_data.rds")
+processed_data <- precomputed$processed_data
+municipality_list <- precomputed$municipality_list
+temporal_aggregations <- precomputed$temporal_aggregations
+top_municipalities <- precomputed$top_municipalities
+
+# UI ------------------
 ui <- fluidPage(
   useShinyjs(),
   tags$head(
@@ -68,31 +78,30 @@ ui <- fluidPage(
   fluidRow(
     div(
       class = "title-container",
-      h2("Colombia vs Drogas"),
+      h2("Colombia vs Drogas v.1.0"),
       p(
         HTML(
-          "Integración y exploración espacio-temporal de todos los datos disponibles relativos a los avances en la lucha contra el problema mundial de las drogas del
-          <a href='https://www.mindefensa.gov.co/defensa-y-seguridad/datos-y-cifras/informacion-estadistica'
-          target='_blank' style='color: #007bff; text-decoration: none; font-weight: bold;'>Ministerio de Defensa</a>
-          (versión publicada 16 de enero de 2025)"
+          "Integración y exploración espacio-temporal de todos los datos disponibles del <a href='https://www.mindefensa.gov.co/defensa-y-seguridad/datos-y-cifras/informacion-estadistica'
+          target='_blank' style='color: #007bff; text-decoration: none; font-weight: bold;'>Ministerio de Defensa</a> relativos a los avances en la lucha contra el problema mundial de las drogas
+          (consulta del 16 de enero de 2025)"
         )
-      ), 
-      p("Autor: Luis Felipe Villota Macías", style = "font-size: 14px; color: #888; margin-top: 10px;") 
+      ),
+      p("Autor: Luis Felipe Villota Macías", style = "font-size: 14px; color: #888; margin-top: 10px;")
     )
   ),
-
+  
   ## Sidebar layout ----
   sidebarLayout(
     sidebarPanel(
       class = "sidebar-panel",
-      selectInput("dataset", "Tipo de operación:", choices = names(working_data)),
-
+      selectInput("dataset", "Tipo de operación:", choices = names(processed_data)),
+      
       ### Dataset description ----
       div(
         style = "margin-top: 20px; font-style: italic; color: #bbbbbb;",
         htmlOutput("dataset_description")
       ),
-
+      
       ### Map Configuration ----
       div(
         class = "time-control",
@@ -116,7 +125,7 @@ ui <- fluidPage(
           animate = FALSE
         )
       ),
-
+      
       ### Loading Status ----
       div(
         id = "loading-status",
@@ -128,16 +137,16 @@ ui <- fluidPage(
         )
       )
     ),
-
+    
     ### Main panel ----
     mainPanel(
       class = "main-panel",
       tabsetPanel(
         id = "mainTabs",
-
+        
         #### Tab 1 ----
         tabPanel(
-          "Mapa de calor de cantidades intervenidas",
+          "Mapa de calor (distribución de cantidades intervenidas)",
           value = "map_tab",
           div(
             style = "position:relative;",
@@ -152,13 +161,13 @@ ui <- fluidPage(
               )
             ),
             absolutePanel(
-              bottom = 10,
-              left = 10,
+              top = 10,    # Changed from bottom
+              right = 10,  # Changed from left
               style = paste0(
                 "z-index:500; background-color: rgba(240,240,240,0.8); padding: 8px; border-radius: 5px;",
                 "box-shadow: 0 0 15px rgba(0,0,0,0.2); color: black;"
               ),
-              checkboxInput("showClusters", tags$span("Número de operaciones (clusters municipales)", style = "color: black;"), value = FALSE, width = "100%")
+              checkboxInput("showClusters", tags$span("Clusters municipales", style = "color: black;"), value = FALSE, width = "100%"),
             )
           ),
           div(
@@ -175,13 +184,13 @@ ui <- fluidPage(
             )
           )
         ),
-
+        
         #### Tab 2 ----
         tabPanel(
           "Distribución temporal (por municipio)",
           value = "heatmap_tab",
           div(
-            style = "position:relative; height: 80vh;",
+            style = "position:relative; height: 90vh;",
             fluidRow(
               column(8,
                      plotlyOutput("heatmapTime", height = "70vh")),
@@ -200,7 +209,8 @@ ui <- fluidPage(
                                       class = "btn-block",
                                       style = "margin-top: 10px;")
                      ),
-                     plotlyOutput("selected_timeline", height = "25vh")
+                     plotlyOutput("selected_timeline", height = "25vh"),
+                     plotlyOutput("municipio_barchart", height = "25vh") 
               )
             )
           ),
@@ -213,50 +223,16 @@ ui <- fluidPage(
 
 ## Server ----
 server <- function(input, output, session) {
-
+  
   ### Reactive values ----
-  dataset_cache <- reactiveVal(list())
   processing_status <- reactiveVal("idle")
-  municipio_choices <- reactiveVal(NULL)
-  selected_municipios <- reactiveVal(NULL)
-
+  
   ### Selected data ----
   selected_data <- reactive({
     req(input$dataset)
-    processing_status("loading")
-
-    cached_data <- dataset_cache()[[input$dataset]]
-    if (!is.null(cached_data)) {
-      processing_status("idle")
-      return(cached_data)
-    }
-
-    df <- working_data[[input$dataset]] %>%
-      filter(
-        !is.na(LATITUD),
-        !is.na(LONGITUD),
-        between(LATITUD, -4.23, 13.5),
-        between(LONGITUD, -82.0, -66.87)
-      )
-
-    validate(need(nrow(df) > 0, "El conjunto seleccionado no contiene coordenadas válidas"))
-
-    if ("fecha_hecho" %in% colnames(df)) {
-      tryCatch({
-        df <- df %>% mutate(fecha_hecho = as.Date(fecha_hecho))
-      }, error = function(e) {
-        df$fecha_hecho <- as.Date(NA)
-      })
-    }
-
-    current_cache <- dataset_cache()
-    current_cache[[input$dataset]] <- df
-    dataset_cache(current_cache)
-
-    processing_status("idle")
-    return(df)
+    processed_data[[input$dataset]]
   })
-
+  
   # Map data ----
   map_data <- reactive({
     df <- selected_data()
@@ -266,7 +242,7 @@ server <- function(input, output, session) {
       zoom = 5
     )
   })
-
+  
   # Observe processing status ----
   observe({
     if (processing_status() == "loading") {
@@ -275,14 +251,20 @@ server <- function(input, output, session) {
       shinyjs::hide("loading-status")
     }
   })
-
+  
   # Dataset description ----
   output$dataset_description <- renderUI({
     req(input$dataset)
     HTML(paste0("<strong>Descripción:</strong> ", dataset_descriptions[[input$dataset]]))
   })
-
-
+  
+  # Initialize selectizeInput when dataset changes
+  observe({
+    req(input$dataset)
+    munis <- municipality_list[[input$dataset]]
+    updateSelectizeInput(session, "municipio_search", choices = munis, server = TRUE)
+  })
+  
   # Map output ----
   output$map <- renderLeaflet({
     req(input$mainTabs == "map_tab")
@@ -290,22 +272,33 @@ server <- function(input, output, session) {
     df <- map_info$data
     validate(need(nrow(df) > 0, "No hay datos válidos para mostrar"))
     
-    leaflet(options = leafletOptions(preferCanvas = TRUE)) %>%
+    #### Legend palette----
+    pal <- colorNumeric(
+      palette = rev(c("#440154", "#414487", "#2A788E", "#22A884", "#FDE725")), # Reversed for correct legend order
+      domain = df$cantidad
+    )
+    
+    # Create the leaflet map-----
+    map <- leaflet(options = leafletOptions(preferCanvas = TRUE)) %>%
       addProviderTiles(providers$CartoDB.DarkMatter) %>%
       setView(lng = map_info$center$lng, lat = map_info$center$lat, zoom = map_info$zoom) %>%
+      
+      # Heatmap Layer ----
       addHeatmap(
         data = df,
         lng = ~ LONGITUD,
         lat = ~ LATITUD,
         intensity = if ("cantidad" %in% colnames(df)) ~ cantidad else 1,
-        radius = input$heatRadius,
-        blur = input$heatRadius * 1.5,
+        radius = input$heatRadius * 1,
+        blur = input$heatRadius * 1.8,
         max = input$heatIntensity,
-        gradient = c("#0000FF", "#00FFFF", "#00FF00", "#FFFF00", "#FF0000")
+        gradient <- c("#440154", "#414487", "#2A788E", "#22A884", "#FDE725")
       ) %>%
+      
+      # MiniMap ----
       addMiniMap(
         tiles = providers$CartoDB.DarkMatterNoLabels,
-        position = "bottomright",
+        position = "bottomleft",
         width = 150,
         height = 150,
         zoomLevelOffset = -5,
@@ -322,221 +315,282 @@ server <- function(input, output, session) {
           fillColor = "#65cb5e", # Viridis blue
           fillOpacity = 0.2
         )
-      )
-  })
-
-  # Cluster observer ----
-  observe({
-    req(map_data())
-    df <- map_data()$data
-    map_proxy <- leafletProxy("map")
+      )  %>% 
     
-    # Always clear markers and cluster layers
-    map_proxy %>% 
-      clearMarkers() %>%
-      clearMarkerClusters()
-    
-    if (input$showClusters && nrow(df) > 0) {
-      popup_content <- sapply(1:nrow(df), function(i) {
-        paste0(
-          if ("municipio" %in% colnames(df)) paste0("<b>Municipio:</b> ", df$municipio[i], "<br/>"),
-          if ("fecha_hecho" %in% colnames(df)) paste0("<b>Fecha:</b> ", format(df$fecha_hecho[i], "%d-%m-%Y"), "<br/>"),
-          if ("cantidad" %in% colnames(df)) paste0("<b>Cantidad:</b> ", df$cantidad[i])
-        )
-      })
+      #Add Legend --------
       
-      map_proxy %>% addCircleMarkers(
-        data = df,
-        lng = ~LONGITUD,
-        lat = ~LATITUD,
-        radius = 2,
-        color = "#FFFFFF",
-        fillOpacity = 0.5,
-        popup = popup_content,
-        clusterOptions = markerClusterOptions(
-          maxClusterRadius = 30,
-          spiderfyOnMaxZoom = TRUE,
-          zoomToBoundsOnClick = TRUE
+    addLegend(
+      position = "bottomright",
+      pal = pal,
+      values = df$cantidad,
+      title = paste0(
+        "<div style='font-size: 12px; line-height: 1.3;'>",
+        input$dataset, "<br>",
+        dataset_legend_info[[input$dataset]],"<br>", "Distribución:", "<br>", 
+        "</div>"
+      ),
+      opacity = 1,
+      labFormat = labelFormat(
+        transform = function(x) {
+          breaks <- pretty(x, n = 3)
+          breaks <- sort(breaks, decreasing = TRUE)
+          return(breaks)
+        }
+      ),
+      bins = 5,
+      na.label = "Sin datos"
+    )
+  
+    # Cluster observer input
+    # if (input$showClusters) {
+    #   # Aggregate data by municipality
+    #   municipality_counts <- df %>%
+    #     group_by(municipio) %>%
+    #     summarise(
+    #       count = n(),
+    #       avg_lat = mean(LATITUD, na.rm = TRUE),
+    #       avg_lon = mean(LONGITUD, na.rm = TRUE)
+    #     ) %>%
+    #     filter(!is.na(avg_lat), !is.na(avg_lon)) # Filter out rows with NA coordinates
+    #   
+    #   # Add circle markers to the map
+    #   map <- map %>%
+    #     addCircleMarkers(
+    #       data = municipality_counts,
+    #       lng = ~avg_lon,
+    #       lat = ~avg_lat,
+    #       radius = 5,
+    #       weight = 1,
+    #       color = "#FFFF00",
+    #       fillOpacity = 0.5,
+    #       label = ~paste0(municipio, ": ", count),
+    #       clusterOptions = markerClusterOptions()
+    #     )
+    # }
+    
+   # Cluster observer ----
+    observe({
+      req(input$showClusters, map_data())
+      
+      # Extract data and leaflet proxy
+      df <- map_data()$data
+      map_proxy <- leafletProxy("map")
+      
+      # Clear existing markers and clusters
+      map_proxy %>%
+        clearMarkers() %>%
+        clearMarkerClusters()
+      
+      # Add cluster markers if the condition is met and data exists
+      if (nrow(df) > 0) {
+        # Aggregate data by municipality *before* creating popups (efficiency)
+        municipality_counts <- df %>%
+          group_by(municipio, departamento, LATITUD, LONGITUD) %>%  # Group by location too!
+          summarise(
+            count = n(), .groups = "drop"  # Count operations per municipality
+          ) %>%
+          filter(!is.na(LATITUD), !is.na(LONGITUD)) # remove NA coords
+        
+        # Create popups (only once, after aggregation)
+        popup_content <- sprintf(
+          "<b>Municipio:</b> %s<br/><b>Departamento:</b> %s<br/><b>Operaciones totales:</b> %s",
+          municipality_counts$municipio,
+          municipality_counts$departamento,
+          municipality_counts$count
         )
-      )
-    }
+        
+        # Add circle markers to the map with cluster options
+        map_proxy %>% addCircleMarkers(
+          data = municipality_counts,
+          lng = ~LONGITUD,
+          lat = ~LATITUD,
+          radius = 5, # Adjust radius as needed
+          weight = 1,
+          color = "#FFFF00",  # Change marker color
+          fillOpacity = 0.6,  # Adjust fill opacity
+          popup = popup_content,
+          clusterOptions = markerClusterOptions(
+            maxClusterRadius = 40, # adjust
+            disableClusteringAtZoom = 8 # adjust
+          )
+        )
+      }
+    })
+    
+    
+    map
   })
   
-  # Timeline plot ----
+  
+  # Timeline output ----
   output$timeline <- renderPlotly({
     req(input$mainTabs == "map_tab")
-    df <- selected_data() %>% 
-      filter(!is.na(fecha_hecho)) %>% # Ensure fecha_hecho is not NA
-      mutate(month = floor_date(fecha_hecho, "month")) %>% 
-      count(month, name = "cantidad")
+    req(input$dataset)
     
-    if (nrow(df) > 0) {
-      date_range <- seq(min(df$month), max(df$month), by = "month")
-      df <- data.frame(month = date_range) %>% 
-        left_join(df, by = "month") %>% 
-        mutate(cantidad = replace_na(cantidad, 0))
-      
-      plot_ly(df, x = ~month, y = ~cantidad, type = 'scatter', mode = 'lines+markers', 
-              marker = list(color = ~cantidad, colorscale = 'Viridis'),
-              line = list(color = '#21918c')) %>%
-        layout(
-          title = list(text = "Evolución Temporal de Operaciones", font = list(color = '#FFFFFF')),
-          xaxis = list(title = "Fecha", gridcolor = '#444444', tickformat = "%b %Y"),
-          yaxis = list(title = "Número", gridcolor = '#444444'),
-          plot_bgcolor = '#1e1e1e',
-          paper_bgcolor = '#1e1e1e'
-        )
-    } else {
-      # Return an empty plot if there's no data
-      plotly_empty() %>% 
-        layout(
-          title = list(text = "No hay datos disponibles para el gráfico de línea de tiempo", font = list(color = '#FFFFFF')),
-          xaxis = list(title = "Fecha", gridcolor = '#444444'),
-          yaxis = list(title = "Número", gridcolor = '#444444'),
-          plot_bgcolor = '#1e1e1e',
-          paper_bgcolor = '#1e1e1e'
-        )
-    }
+    timeline_data <- temporal_aggregations[[input$dataset]]$monthly_counts
+    validate(need(nrow(timeline_data) > 0, "No hay datos temporales disponibles para este dataset."))
+    
+    plot_ly(data = timeline_data, x = ~month, y = ~Acumulado, type = 'scatter', mode = 'lines',
+            line = list(color = '#21918c'),
+            fill = 'tozeroy', fillcolor = 'rgba(0,123,255,0.2)',
+            hovertemplate = paste('<b>Fecha</b>: %{x|%B %Y}<br>',
+                                  '<b>Acumulado</b>: %{y}<extra></extra>')) %>%
+      layout(
+        title = list(text = "Evolución Temporal de Operaciones (Nivel nacional)", font = list(color = '#FFFFFF')),
+        xaxis = list(title = "Fecha", gridcolor = '#444444', tickformat = "%b %Y"),
+        yaxis = list(title = "Número", gridcolor = '#444444'),
+        plot_bgcolor = '#1e1e1e',
+        paper_bgcolor = '#1e1e1e'
+      )
   })
-
-  # Heatmap logic ----
-  prepare_heatmap_data <- reactive({
-    df <- selected_data()
-
-    df %>%
-      filter(!is.na(fecha_hecho)) %>%
-      mutate(month = floor_date(fecha_hecho, "month"),
-             municipio = as.character(municipio)) %>%
-      count(month, municipio, name = "total") %>%
-      filter(total > 0) %>%
-      arrange(month)
+  
+  # Heatmap data ----
+  heatmap_data <- reactive({
+    req(input$dataset)
+    temporal_aggregations[[input$dataset]]$heatmap_data
   })
-
+  
+  # Heatmap output ----
   observe({
-    df_agg <- prepare_heatmap_data()
-    updateSelectizeInput(session, "municipio_search", choices = unique(df_agg$municipio), server = TRUE)
+    data <- heatmap_data()
+    updateSelectizeInput(session, "municipio_search", choices = unique(data$municipio), server = TRUE)
   })
-
+  
   output$heatmapTime <- renderPlotly({
     req(input$mainTabs == "heatmap_tab")
-
-    df_agg <- prepare_heatmap_data()
-
-    # Filter based on selected municipios, or show top 100 if none selected
+    data <- filtered_heatmap_data()  # Changed to use filtered data
+    
+    validate(need(nrow(data) > 0, "No hay datos para mostrar en el heatmap."))
+    
+    plot_ly(data = data,
+            x = ~month,
+            y = ~municipio,
+            z = ~total,
+            type = "heatmap",
+            colorscale = "Viridis",
+            hovertemplate = paste('<b>Municipio</b>: %{y}<br>',
+                                  '<b>Mes</b>: %{x|%B %Y}<br>',
+                                  '<b>Total</b>: %{z}<extra></extra>')
+    ) %>%
+      layout(
+        title = list(text = "Panorama nacional", x = 0.5, y=5),
+        xaxis = list(title = "Mes", gridcolor = '#444444'),
+        yaxis = list(title = "Municipio", categoryorder = "total ascending",
+                     gridcolor = '#444444', tickfont = list(size = 7)),
+        plot_bgcolor = '#1e1e1e',
+        paper_bgcolor = '#1e1e1e',
+        font = list(color = '#FFFFFF')
+      )
+  })
+  
+  # Filtered heatmap data ----
+  filtered_heatmap_data <- reactive({
+    data <- heatmap_data()
     if (!is.null(input$municipio_search) && length(input$municipio_search) > 0) {
-      filtered_df <- df_agg %>% filter(municipio %in% input$municipio_search)
+      data <- data %>% filter(municipio %in% input$municipio_search)
+    }
+    data
+  })
+  
+  # Selected timeline output ----
+  output$selected_timeline <- renderPlotly({
+    req(input$mainTabs == "heatmap_tab")
+    data <- filtered_heatmap_data()
+    
+    validate(
+      need(length(input$municipio_search) > 0,  # Check for selection instead of data rows
+           "Seleccione al menos un municipio para ver la línea de tiempo.")
+    )
+    
+    data %>%
+      group_by(month) %>%
+      summarise(total = sum(total)) %>%
+      plot_ly(x = ~month, y = ~total, type = 'scatter', mode = 'lines',
+              line = list(color = '#21918c'),
+              fill = 'tozeroy', fillcolor = 'rgba(33,145,140,0.2)',
+              hovertemplate = paste('<b>Mes</b>: %{x|%B %Y}<br>',
+                                    '<b>Total</b>: %{y}<extra></extra>')) %>%
+      layout(
+        title = list(text = "Operaciones acumuladas", x = 0.1),
+        xaxis = list(title = "", tickformat = "%b %Y"),
+        yaxis = list(title = "Total"),
+        plot_bgcolor = 'rgba(0, 0, 0, 0)',
+        paper_bgcolor = 'rgba(0, 0, 0, 0)',
+        font = list(color = '#ffffff')
+      )
+  })
+  
+  
+  # Bar chart data ----
+  municipio_barchart_data <- reactive({
+    data <- heatmap_data()
+    
+    # Filter if municipios are selected
+    if (!is.null(input$municipio_search) && length(input$municipio_search) > 0) {
+      data <- data %>% 
+        filter(municipio %in% input$municipio_search)
     } else {
-      top_municipios <- df_agg %>%
+      # Show top 15 municipios if none selected
+      data <- data %>%
         group_by(municipio) %>%
         summarise(total = sum(total)) %>%
-        slice_max(total, n = 100) %>%
-        pull(municipio)
-      filtered_df <- df_agg %>% filter(municipio %in% top_municipios)
+        slice_max(total, n = 15)
     }
-
-    # Create the heatmap plot
-    if (nrow(filtered_df) > 0) {
-      plot_ly(filtered_df, x = ~month, y = ~municipio, z = ~total, type = "heatmap",
-              colorscale = "Viridis", hoverinfo = "text",
-              text = ~paste("<b>", municipio, "</b><br>Fecha: ", format(month, "%b %Y"),
-                            "<br>Intervenciones: ", total)) %>%
-        layout(
-          xaxis = list(title = "Mes", gridcolor = '#444444'),
-          yaxis = list(title = "Municipio", categoryorder = "total ascending",
-                       gridcolor = '#444444', tickfont = list(size = 10)),
-          plot_bgcolor = '#1e1e1e',
-          paper_bgcolor = '#1e1e1e',
-          font = list(color = '#FFFFFF')
-        )
-    } else {
-      plotly_empty() %>%
-        layout(
-          title = list(text = "No hay datos disponibles para el heatmap", font = list(color = '#FFFFFF')),
-          xaxis = list(title = "Mes", gridcolor = '#444444'),
-          yaxis = list(title = "Municipio", gridcolor = '#444444'),
-          plot_bgcolor = '#1e1e1e',
-          paper_bgcolor = '#1e1e1e',
-          font = list(color = '#FFFFFF')
-        )
-    }
+    
+    # Aggregate totals
+    data %>%
+      group_by(municipio) %>%
+      summarise(total = sum(total)) %>%
+      arrange(desc(total))
   })
+  
+  # Bar chart output ----
+  output$municipio_barchart <- renderPlotly({
+    data <- municipio_barchart_data()
+    validate(need(nrow(data) > 0, "No hay datos disponibles para el gráfico de barras."))
 
-
-  # # Selected timeline ----
-  # output$selected_timeline <- renderPlotly({
-  #   req(input$mainTabs == "heatmap_tab", input$municipio_search)
-  #   
-  #   # Ensure that input$municipio_search is not NULL and has at least one value selected
-  #   if (!is.null(input$municipio_search) && length(input$municipio_search) > 0) {
-  #     df <- selected_data() %>%
-  #       filter(!is.na(fecha_hecho)) %>%
-  #       filter(municipio %in% input$municipio_search) %>%
-  #       mutate(month = floor_date(fecha_hecho, "month")) %>%
-  #       count(month, municipio, name = "total")
-  #     
-  #     if (nrow(df) > 0) {
-  #       p <- plot_ly()
-  #       
-  #       # Group data by municipio and add a trace for each
-  #       df %>%
-  #         group_by(municipio) %>%
-  #         do(
-  #           p = add_trace(
-  #             p,
-  #             x = ~month,
-  #             y = ~total,
-  #             type = 'scatter',
-  #             mode = 'lines+markers',
-  #             name = first(.$municipio),  # Use municipio name for the legend
-  #             line = list(), # You can customize line properties here if needed
-  #             marker = list() # You can customize marker properties here if needed
-  #           )
-  #         )
-  #       
-  #       p <- layout(
-  #         p,
-  #         title = list(text = "Serie Temporal por Municipio", font = list(size = 14, color = '#FFFFFF')),
-  #         xaxis = list(title = "Fecha", gridcolor = '#444444', color = '#FFFFFF'),
-  #         yaxis = list(title = "Intervenciones", gridcolor = '#444444', color = '#FFFFFF'),
-  #         plot_bgcolor = '#1e1e1e',
-  #         paper_bgcolor = '#1e1e1e',
-  #         margin = list(t = 40),
-  #         font = list(color = '#FFFFFF'),
-  #         showlegend = TRUE  # Make sure the legend is displayed
-  #       )
-  #       
-  #       p # Print the plot
-  #     } else {
-  #       plotly_empty() %>%
-  #         layout(
-  #           title = list(text = "No hay datos disponibles para la serie temporal seleccionada", font = list(size = 14, color = '#FFFFFF')),
-  #           xaxis = list(title = "Fecha", gridcolor = '#444444', color = '#FFFFFF'),
-  #           yaxis = list(title = "Intervenciones", gridcolor = '#444444', color = '#FFFFFF'),
-  #           plot_bgcolor = '#1e1e1e',
-  #           paper_bgcolor = '#1e1e1e',
-  #           margin = list(t = 40),
-  #           font = list(color = '#FFFFFF')
-  #         )
-  #     }
-  #   } else {
-  #     plotly_empty() %>%
-  #       layout(
-  #         title = list(text = "Seleccione al menos un municipio", font = list(size = 14, color = '#FFFFFF')),
-  #         xaxis = list(title = "Fecha", gridcolor = '#444444', color = '#FFFFFF'),
-  #         yaxis = list(title = "Intervenciones", gridcolor = '#444444', color = '#FFFFFF'),
-  #         plot_bgcolor = '#1e1e1e',
-  #         paper_bgcolor = '#1e1e1e',
-  #         margin = list(t = 40),
-  #         font = list(color = '#FFFFFF')
-  #       )
-  #   }
-  # })
-  # 
-  # Reset search ----
+    plot_ly(data,
+            x = ~reorder(municipio, -total),
+            y = ~total,
+            type = "bar",
+            marker = list(
+              color = ~total,
+              colorscale = "Viridis",
+              showscale = TRUE
+            ),
+            hoverinfo = "text",
+            text = ~paste0("<b>", municipio, "</b>\nTotal: ", total)
+    ) %>%
+      layout(
+        title = list(
+          text = "Operaciones por Municipio",
+          font = list(color = "#FFFFFF", size = 14)
+        ),
+        xaxis = list(
+          title = "",
+          categoryorder = "total descending",
+          tickangle = -45,
+          tickfont = list(size = 10, color = "#FFFFFF")
+        ),
+        yaxis = list(
+          title = "Total",
+          gridcolor = "#444444",
+          tickfont = list(color = "#FFFFFF")
+        ),
+        plot_bgcolor = "#1e1e1e",
+        paper_bgcolor = "#1e1e1e",
+        margin = list(t = 40, b = 100),
+        font = list(color = "#FFFFFF")
+      ) %>%
+      config(displayModeBar = FALSE)
+  })
+  
+  
+  # Reset search functionality ----
   observeEvent(input$reset_search, {
     updateSelectizeInput(session, "municipio_search", selected = character(0))
   })
 }
 
-# Shiny app ----
+# Run the application ----
 shinyApp(ui = ui, server = server)
