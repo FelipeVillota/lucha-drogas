@@ -1,0 +1,13 @@
+name: lucha-drogas
+title: lucha-drogas
+username: felipevillota
+account: felipevillota
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 14121313
+bundleId: 9956005
+url: https://felipevillota.shinyapps.io/lucha-drogas/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .RData|.RDataTmp|.RDataTmp1|.RDataTmp2|.RDataTmp3|.Rprofile|casos-departamentos.txt|casos-municipios.txt|colombia-vs-drogas-diagram.mermaid|correcting-missing-places.xlsx|material-de-apoyo/MAPA-ESQUEMATICO-2024.pdf|material-de-apoyo/SEGUIMIENTO_INDICADORES_SEGURIDAD_RESULTADOS_OPERACIONALES.pptx|missing-places.txt|municipios-por-departamento.txt|notas.txt|output-map.R|output-timeline.R|renv.lock|resumen-totales-tiempo.txt|script.R|skim_geo.txt|skim_results.txt|tipos-cultivos-erradicados.txt|units_clean.txt
