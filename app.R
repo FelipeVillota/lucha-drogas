@@ -19,8 +19,8 @@ library(shinyjs)
 
 # Pre-launch sourcing ----
 
-#source("precomputation.R")
-#source("output-descripciones.R")
+source("precomputation.R")
+source("output-descripciones.R")
 
 
 precomputed <- readRDS("data/preprocessed_data.rds")
